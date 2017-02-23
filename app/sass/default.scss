@@ -1,0 +1,178 @@
+@import 'prefixer';
+@import 'colors';
+@import 'normalize';
+
+//TODO: add all flexbox props in prefixer
+//MIXINS
+@mixin button() {
+	position: relative;
+	a {
+		
+		text-transform: uppercase;
+		text-decoration: none;
+		box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.5);
+		padding: 10px 12px;
+		border-radius: 300px;
+	}
+}
+
+@mixin buttonColor($color) {
+	a {
+		background-color: color(#{$color}, 'darken-3');
+		color: color(#{$color}, 'lighten-4');
+		&:hover {
+			background-color: color(#{$color}, 'darken-2');
+			box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
+		}
+	}
+}
+
+body {
+	background-color: color('blue-grey', 'lighten-5');
+}
+
+.b-wrapper {
+	display: flex;
+	flex-direction: column;
+	margin: 30px 0;
+	&.b-wrapper--row {
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+	}
+}
+
+.b-button {
+	@include button();
+	&.b-button--primary {
+		@include buttonColor('blue-grey');
+	}
+}
+
+.b-hotel {
+	flex: 1 1 auto;
+	width: 60%;
+	margin: auto;
+	margin-bottom: 20px;
+	display: flex;
+	flex-direction: column;
+	.b-hotel__main {
+		flex: 1 1 auto;
+		display: flex;
+	}
+	.b-hotel__reviews-wrapper {
+		flex: 1 1 auto;
+		display: flex;
+		flex-direction: column;
+	}
+}
+
+.b-image {
+	flex: 0 0 33%;
+	overflow: hidden;
+	display: flex;
+	align-content: center;
+	justify-content: center;
+	flex-direction: column;
+	.b-image__scroller {
+		flex: 1;
+		overflow: hidden;
+		.b-image__wrapper {
+			list-style-type: none;
+			white-space: nowrap;
+			font-size: 0;
+			line-height: 0;
+			transition: transform 0.5s ease-in-out;
+			.b-image__container {
+				@include transition(transform 1s ease-in-out);
+				display: inline-block;
+				.b-image__item {
+					width: 100%;
+					height: auto;
+				}
+			}
+		}
+	}
+	.b-image__controlls {
+		flex: 0 0 auto;
+		margin-top: -30px;
+		display: flex;
+		position: relative;
+		z-index: 3333;
+		.b-image__controll {
+			flex: 1;
+			&.b-image__controll--right {
+				text-align: right;
+			}
+		}
+	}
+}
+
+.b-info {
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	background-color: color('blue-grey', 'lighten-3');
+	padding: 0 20px;
+	.b-info__general {
+		flex: 1 1 auto;
+		display: flex;
+		flex-direction: row;
+		flex-wrap: nowrap;
+		justify-content: space-between;
+		align-items: center;
+	}
+	.b-info__description {
+		flex: 1 2 auto;
+		display: flex;
+		align-items: center;
+	}
+	.b-info__details {
+		flex:  1 1 auto;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+}
+
+.b-toggler {
+	@include button();
+	&.b-toggler--default {
+		@include buttonColor('deep-orange');
+	}
+}
+
+.b-availability {
+	text-align: right;
+}
+
+.b-review {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	padding: 20px 0;
+	.b-review__icon {
+		flex: 0 0 10%;
+		text-align: center;
+		.b-review__icon-item {
+			padding: 10px 12px;
+			border-radius: 50%;
+			&.b-review__icon-item--plus {
+				background-color: color('light-green', 'base');
+				color: color('light-green', 'darken-3')
+			}
+			&.b-review__icon-item--minus {
+				background-color: color('materialize-red', 'base');
+				color: color('materialize-red', 'darken-3')
+			}
+		}
+	}
+	.b-review__content {
+		flex: 1 1 auto;
+		.b-review__name {
+			font-weight: bold;
+		}
+	}
+}
