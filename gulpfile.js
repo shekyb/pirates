@@ -5,14 +5,17 @@ var livereload = require('gulp-livereload');
 var nodemon = require('gulp-nodemon');
 var del = require('del');
 var path = require('path');
-
+var args = require('yargs').argv;
+var gulpif = require('gulp-if');
+var rename = require('gulp-rename');
+var uglify = require('gulp-uglify');
 //sass tasks
 //parse and concat scss files in dev environment
 gulp.task('sass', function(){
 	gulp.src('app/sass/**/*.scss')
 		.pipe(sass().on('error', sass.logError))
 		.pipe(concat('default.css'))
-		.pipe(gulp.dest('dev/assets/css'))
+		.pipe(gulp.dest(args.production ? 'prod/assets/css' : 'dev/assets/css'))
 		.pipe(livereload());
 })
 
@@ -28,7 +31,9 @@ gulp.task('watch:sass', ['sass'], function(){
 gulp.task('js', function(){
 	gulp.src(['app/js/app.js', 'app/js/**/*.js'])
 		.pipe(concat('scripts.js'))
-		.pipe(gulp.dest('dev/assets/js'))
+		.pipe(gulpif(args.production, uglify()))
+		.pipe(gulpif(args.production, rename({suffix : '.min'})))
+		.pipe(gulp.dest(args.production ? 'prod/assets/js' : 'dev/assets/js'))
 		.pipe(livereload());
 })
 
@@ -42,7 +47,7 @@ gulp.task('watch:js', ['js'], function() {
 //moves html partials to the dev folder
 gulp.task('partials', function(){
 	return gulp.src('app/partials/**/*.html')
-	.pipe(gulp.dest('dev/partials'))
+	.pipe(gulp.dest(args.production ? 'prod/partials' : 'dev/partials'))
 	.pipe(livereload());
 })
 
@@ -55,9 +60,7 @@ gulp.task('watch:partials', ['partials'], function(){
 		if(event.type === 'deleted') {
 			console.log('event.path ' + event.path);
 			var filePathFromSrc = path.relative(path.resolve('app'), event.path);
-			var destFilePath = path.resolve('dev/partials', filePathFromSrc);
-			console.log('filePathFromSrc ', filePathFromSrc);
-			console.log('destFilePath ', destFilePath);
+			var destFilePath = path.resolve(args.production ? 'prod/partials' : 'dev/partials', filePathFromSrc);
 			del.sync(destFilePath);
 		}
 	})
@@ -65,12 +68,13 @@ gulp.task('watch:partials', ['partials'], function(){
 
 // start and restart server on server.js and gulpfile.js changes, ignore app, dev and node_modules files
 gulp.task('server', function(){
+	var server = args.production ? 'server-prod.js' : 'server.js';
 	nodemon({
-		script: 'server.js',
+		script: server,
 		ext: 'js',
-		ignore: ['app*', 'dev*', 'node_modules*']
+		ignore: ['app*', 'dev*', 'prod*', 'node_modules*']
 	})
 })
 
 //build files and run server
-gulp.task('serve-dev', ['watch:sass', 'watch:js', 'watch:partials', 'server']);
+gulp.task('serve', ['watch:sass', 'watch:js', 'watch:partials', 'server']);

@@ -5,7 +5,7 @@ app.config(['$stateProvider', '$locationProvider', function($stateProvider, $loc
 		name: 'home',
 		url: '/',
 		templateUrl: 'partials/home.html',
-		controller: function($scope, $state, HotelSvc){
+		controller: ['$scope', '$state', 'HotelSvc', function($scope, $state, HotelSvc){
 			$scope.hotels;
 			$scope.getHotels = function() {
 				HotelSvc.getHotels().then(function(res){
@@ -18,7 +18,6 @@ app.config(['$stateProvider', '$locationProvider', function($stateProvider, $loc
 					}
 					
 				});
-				
 			}
 			$scope.toggler = function(){
 				var togglerButton = {
@@ -69,19 +68,13 @@ app.config(['$stateProvider', '$locationProvider', function($stateProvider, $loc
 				}
 			}();
 			
-		}
+		}]
 	}).state('home.hotels', {
 		name: 'home.hotels',
-		template: '<hotel ng-repeat="hotel in hotels" hotel-obj="hotel"></hotel>',
-		controller: function($scope){
-
-		}
+		template: '<hotel ng-repeat="hotel in hotels" hotel-obj="hotel"></hotel>'
 	}).state('home.error', {
 		name: 'home.error',
-		template: '<div class="b-error"><p class="b-error__text">{{error}}</p></div>',
-		controller: function() {
-
-		}
+		template: '<div class="b-error"><p class="b-error__text">{{error}}</p></div>'
 	})
 	
 	$locationProvider.html5Mode(true);

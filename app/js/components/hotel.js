@@ -3,7 +3,7 @@ app.component('hotel', {
 		hotelObj: '='
 	},
 	templateUrl: 'partials/hotel.html',
-	controller: function(HotelSvc, $state){
+	controller: ['HotelSvc', '$state', function(HotelSvc, $state){
 		this.$onInit = function(){
 			var start = formatDate(this.hotelObj.date_start);
 			var end = formatDate(this.hotelObj.date_end);
@@ -107,5 +107,5 @@ app.component('hotel', {
 				prev: moveLeft
 			}
 		}();
-	}
+	}]
 })
