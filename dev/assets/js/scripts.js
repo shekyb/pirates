@@ -1,6 +1,4 @@
-var app = angular.module('app', ['ui.router', 'ConsoleLogger']).run(['PrintToConsole', function(PrintToConsole) {
-    PrintToConsole.active = false;
-}]);
+var app = angular.module('app', ['ui.router']);
 
 app.config(['$stateProvider', '$locationProvider', function($stateProvider, $locationProvider){
 	$stateProvider.state('home', {
@@ -11,11 +9,65 @@ app.config(['$stateProvider', '$locationProvider', function($stateProvider, $loc
 			$scope.hotels;
 			$scope.getHotels = function() {
 				HotelSvc.getHotels().then(function(res){
-					$scope.hotels = res.data;
-					$state.go('home.hotels');
+					if(res.status !== 500) {
+						$scope.hotels = res.data;
+						$state.go('home.hotels');
+					} else {
+						$scope.error = res.data.error;
+						$state.go('home.error')
+					}
+					
 				});
 				
 			}
+			$scope.toggler = function(){
+				var togglerButton = {
+					string: 'Load hotels',
+					class: ''
+				}
+				var wrapper = {
+					class: 'b-wrapper--half'
+				}
+
+				var background = {
+					class: ''
+				}
+				var updateToggler = function(string, className){
+					togglerButton.string = string;
+					togglerButton.class = className;
+				}
+				var updateWrapper = function(className) {
+					wrapper.class = className
+				}
+				var updateBackground = function(className){
+					background.class = className;
+				}
+				var showHotels = function(){
+					updateToggler('Loading', 'b-button--loading');
+					HotelSvc.getHotels().then(function(res){
+						if(res.status !== 500) {
+							$scope.hotels = res.data;
+							updateToggler('Load another set', 'b-button--success');
+							updateWrapper('');
+							updateBackground('b-background--gradient');
+							$state.go('home.hotels');
+						} else {
+							$scope.error = res.data.error;
+							updateWrapper('');
+							updateToggler('Try again', 'b-button--error');
+							updateBackground('b-background--gradient');
+							$state.go('home.error')
+						}
+						
+					});
+				}
+				return {
+					getHotels: showHotels,
+					togglerButton: togglerButton,
+					wrapper: wrapper,
+					background: background
+				}
+			}();
 			
 		}
 	}).state('home.hotels', {
@@ -24,34 +76,16 @@ app.config(['$stateProvider', '$locationProvider', function($stateProvider, $loc
 		controller: function($scope){
 
 		}
+	}).state('home.error', {
+		name: 'home.error',
+		template: '<div class="b-error"><p class="b-error__text">{{error}}</p></div>',
+		controller: function() {
+
+		}
 	})
 	
 	$locationProvider.html5Mode(true);
 }])
-
-//slider
-//TODO adjust for multiples and end of slide
-var d = document;
-var wrap = d.querySelector('.b-image');
-var items = d.querySelector('.b-image__wrapper');
-var itemCount = d.querySelectorAll('.b-image__container').length;
-var scroller = d.querySelector('.b-image__scroller');
-var pos = 0;
-//var transform = Modernizr.prefixed('transform');
-
-function setTransform() {
-  items.style.transform = 'translate3d(' + (-pos * items.offsetWidth) + 'px,0,0)';
-}
-
-function prev() {
-  pos = Math.max(pos - 1, 0);
-  setTransform();
-}
-
-function next() {
-  pos = Math.min(pos + 1, itemCount - 1);
-  setTransform();
-}
 angular.module("ConsoleLogger", [])
 .factory("PrintToConsole", ["$rootScope", function ($rootScope) {
     var handler = { active: false };
@@ -100,7 +134,6 @@ app.component('hotel', {
 	},
 	templateUrl: 'partials/hotel.html',
 	controller: function(HotelSvc, $state){
-		var that = this;
 		this.$onInit = function(){
 			var start = formatDate(this.hotelObj.date_start);
 			var end = formatDate(this.hotelObj.date_end);
@@ -108,13 +141,21 @@ app.component('hotel', {
 			this.hotel.date_start = start;
 			this.hotel.date_end = end;
 			this.reviewFlag = false;
-			this.toggleString = 'Show reviews'
+			this.toggleString = 'Show reviews';
+			this.sliderImages = [];
+			for (var i = 0; i < this.hotel.images.length; i++) {
+				var imgObj = {};
+				imgObj.src = this.hotel.images[i];
+				imgObj.visible = false
+				this.sliderImages.push(imgObj);
+			}
+			this.sliderImages[0].visible = true;
 		}
+		var that = this;
 		var formatDate = function(date) {
 			var d = new Date(date);
 			return d.toLocaleDateString('de-DE');
 		}
-
 		this.toggleReview = function(hotelId) {
 			if(!this.reviewFlag) {
 				HotelSvc.getReview(hotelId).then(function(res){
@@ -126,9 +167,76 @@ app.component('hotel', {
 				this.reviewFlag = false;
 				this.toggleString = 'Show reviews';
 			}
-			
 		}
 
+		this.toggler = function(){
+			var tg = this;
+			var reviewFlag = false;
+			var reviewWrapper = {
+				class: ''
+			}
+			var toggler = {
+				class: '',
+				string: 'Show reviews'
+			}
+			var updateReviewWrapper = function(className) {
+				reviewWrapper.class = className
+			}
+
+			var updateToggler = function(className, string) {
+				toggler.class = className;
+				toggler.string = string
+			}
+			var showReview = function(hotelId){
+				if(!reviewFlag) {
+					HotelSvc.getReview(hotelId).then(function(res){
+						that.reviews = res.data;
+						reviewFlag = true;
+						updateReviewWrapper('b-hotel__reviews-wrapper--open');
+						updateToggler('b-toggler--success', 'Close reviews')
+
+					})
+				} else {
+					reviewFlag = false;
+					updateReviewWrapper('');
+					updateToggler('', 'Show reviews');
+				}
+			}
+			return {
+			 	showReview: showReview,
+			 	reviewWrapper: reviewWrapper,
+			 	toggler: toggler,
+			 	reviewFlag: reviewFlag
+			 }
+		}()
+
+		this.slides = function(){
+			var slidePosition = 0;
+			var move = function(){
+				for (var i = 0; i < that.sliderImages.length; i++) {
+					that.sliderImages[i].visible = false;
+				}
+				that.sliderImages[slidePosition].visible = true;
+			}
+			var moveRight = function(){
+				if(slidePosition < that.sliderImages.length - 1) {
+					slidePosition++
+				} else {
+					slidePosition = 0;
+				}
+				move();
+			}
+			var moveLeft = function(){
+				if(slidePosition > 0) {
+					slidePosition--;
+				}
+				move();
+			}
+			return {
+				next: moveRight,
+				prev: moveLeft
+			}
+		}();
 	}
 })
 app.component('review', {
@@ -142,11 +250,34 @@ app.component('review', {
 		}
 	}
 })
+app.component('slider', {
+	bindings: {
+		imagesArr: '='
+	},
+	templateUrl: 'partials/slider.html',
+	controller: function(){
+		this.$onInit = function(){
+			this.images = [];
+			for (var i = 0; i < this.imagesArr.length; i++) {
+				var imgObj = {};
+				imgObj.src = this.imagesArr[i];
+				imgObj.visible = false
+				this.images.push(imgObj);
+			}
+		}
+		
+
+	}
+})
 app.service('HotelSvc', ['$http', function($http){
 	var svc = this;
 
 	svc.getHotels = function() {
-		return $http.get('http://fake-hotel-api.herokuapp.com/api/hotels?count=5&no_error=1');
+		return $http.get('http://fake-hotel-api.herokuapp.com/api/hotels?count=5').then(function(res){
+			return res;
+		}).catch(function(res){
+			return res;
+		});
 	}
 
 	svc.getReview = function(hotelId) {

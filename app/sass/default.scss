@@ -1,8 +1,8 @@
 @import 'prefixer';
 @import 'colors';
 @import 'normalize';
+@import url('https://fonts.googleapis.com/css?family=Dosis:200,400,600&subset=latin-ext');
 
-//TODO: add all flexbox props in prefixer
 //MIXINS
 @mixin button() {
 	position: relative;
@@ -27,18 +27,46 @@
 	}
 }
 
+@mixin buttonSuccess($color) {
+	a {
+		background-color: color(#{$color}, 'lighten-3');
+		color: color(#{$color}, 'darken-3');
+		&:hover {
+			background-color: color(#{$color}, 'lighten-2');
+			box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
+		}
+	}
+}
+
 body {
-	background-color: color('blue-grey', 'lighten-5');
+	font-family: 'Dosis', sans-serif;
 }
 
 .b-wrapper {
 	display: flex;
 	flex-direction: column;
-	margin: 30px 0;
+	padding: 30px 0;
+	height: 10vh;
+	@include transition(1s);
+	@include transition-property(all);
 	&.b-wrapper--row {
 		flex-direction: row;
 		justify-content: center;
 		align-items: center;
+	}
+	&.b-wrapper--half {
+		height: 100vh;
+	}
+	&.b-wrapper--hotels {
+		background-color: #fff;
+		height: 100vh;
+	}
+}
+.b-background {
+	height: 100vh;
+	&.b-background--gradient {
+		background-image: linear-gradient(45deg, #93a5cf 0%, #e4efe9 100%);
+		
 	}
 }
 
@@ -46,6 +74,9 @@ body {
 	@include button();
 	&.b-button--primary {
 		@include buttonColor('blue-grey');
+	}
+	&.b-button--success {
+		@include buttonSuccess('blue-grey');
 	}
 }
 
@@ -59,11 +90,31 @@ body {
 	.b-hotel__main {
 		flex: 1 1 auto;
 		display: flex;
+		border-radius: 3px;
+		overflow: hidden;
+		box-shadow: 0 1px 4px 1px rgba(0, 0, 0, 0.3);
+		z-index: 222;
 	}
 	.b-hotel__reviews-wrapper {
 		flex: 1 1 auto;
+		margin: auto;
+		width: 95%;
 		display: flex;
 		flex-direction: column;
+		z-index: 111;
+		opacity: 0;
+		height: 0;
+		border-bottom-left-radius: 3px;
+		border-bottom-right-radius: 3px;
+		overflow: hidden;
+		@include transform(translate3d(0,-100px,0))
+		@include transition(0.3s);
+		@include transition-property();
+		&.b-hotel__reviews-wrapper--open {
+			@include transform(translate3d(0,0,0));
+			opacity: 1;
+			height: 100%;
+		}
 	}
 }
 
@@ -99,10 +150,24 @@ body {
 		display: flex;
 		position: relative;
 		z-index: 3333;
+		background-color: rgba(255, 255, 255, 0.5);
+		@include transition(0.3s)
+		@include transition-property();
 		.b-image__controll {
 			flex: 1;
+			cursor: pointer;
+			font-size: 20px;
+			padding-left: 20px;
+			a {
+				color: #fff;
+				font-size: 16px;
+			}
+			&:hover {
+				background-color: rgba(255, 255, 255, 0.2);
+			}
 			&.b-image__controll--right {
 				text-align: right;
+				padding-right: 20px;
 			}
 		}
 	}
@@ -113,8 +178,10 @@ body {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	background-color: color('blue-grey', 'lighten-3');
+	background-image: linear-gradient(15deg, #13547a 0%, #80d0c7 100%);
 	padding: 0 20px;
+	color: #fff;
+	font-weight: 200;
 	.b-info__general {
 		flex: 1 1 auto;
 		display: flex;
@@ -127,6 +194,7 @@ body {
 		flex: 1 2 auto;
 		display: flex;
 		align-items: center;
+		font-size: 16px;
 	}
 	.b-info__details {
 		flex:  1 1 auto;
@@ -136,10 +204,28 @@ body {
 	}
 }
 
+.b-name-location {
+	.b-name-location__name {
+		font-weight: 200;
+		padding-bottom: 10px;
+	}
+	.b-name-location__location {
+
+	}
+
+}
+
 .b-toggler {
 	@include button();
+	a {
+		font-size: 12px;
+		padding: 8px 10px; 
+	}
 	&.b-toggler--default {
 		@include buttonColor('deep-orange');
+	}
+	&.b-toggler--success {
+		@include buttonSuccess('blue-grey');
 	}
 }
 
@@ -153,6 +239,16 @@ body {
 	justify-content: space-between;
 	align-items: center;
 	padding: 20px 0;
+	&.b-review--negative {
+		background-image: linear-gradient(15deg, color('materialize-red', 'lighten-3') 0%, color('materialize-red', 'lighten-4') 100%);
+		//background-color: color('materialize-red', 'lighten-4');
+		color: color('materialize-red', 'darken-3')
+	}
+	&.b-review--positive {
+		background-image: linear-gradient(15deg, color('light-green', 'lighten-3') 0%, color('light-green', 'lighten-4') 100%);
+		//background-color: color('light-green', 'lighten-4');
+		color: color('light-green', 'darken-3')
+	}
 	.b-review__icon {
 		flex: 0 0 10%;
 		text-align: center;
@@ -171,8 +267,41 @@ body {
 	}
 	.b-review__content {
 		flex: 1 1 auto;
+		padding-right: 10px;
 		.b-review__name {
 			font-weight: bold;
 		}
+	}
+}
+
+.b-error {
+	flex: 1 1 auto;
+	margin: auto;
+	width: 60%;
+	text-align: center;
+}
+
+.b-star {
+	font-size: 16px;
+	.fa {
+		padding-left: 5px;
+	}
+}
+.b-price {
+	.b-price__currency {
+		font-weight: 200;
+		//font-size: 16px;
+	}
+}
+.b-error {
+	.b-error__text {
+		font-size: 18px;
+		font-weight: 400;
+	}
+}
+
+@media only screen and (max-device-width: 720px) {
+	.b-hotel__main {
+		flex-direction: column;
 	}
 }

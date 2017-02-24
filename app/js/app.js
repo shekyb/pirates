@@ -1,6 +1,4 @@
-var app = angular.module('app', ['ui.router', 'ConsoleLogger']).run(['PrintToConsole', function(PrintToConsole) {
-    PrintToConsole.active = false;
-}]);
+var app = angular.module('app', ['ui.router']);
 
 app.config(['$stateProvider', '$locationProvider', function($stateProvider, $locationProvider){
 	$stateProvider.state('home', {
@@ -11,11 +9,65 @@ app.config(['$stateProvider', '$locationProvider', function($stateProvider, $loc
 			$scope.hotels;
 			$scope.getHotels = function() {
 				HotelSvc.getHotels().then(function(res){
-					$scope.hotels = res.data;
-					$state.go('home.hotels');
+					if(res.status !== 500) {
+						$scope.hotels = res.data;
+						$state.go('home.hotels');
+					} else {
+						$scope.error = res.data.error;
+						$state.go('home.error')
+					}
+					
 				});
 				
 			}
+			$scope.toggler = function(){
+				var togglerButton = {
+					string: 'Load hotels',
+					class: ''
+				}
+				var wrapper = {
+					class: 'b-wrapper--half'
+				}
+
+				var background = {
+					class: ''
+				}
+				var updateToggler = function(string, className){
+					togglerButton.string = string;
+					togglerButton.class = className;
+				}
+				var updateWrapper = function(className) {
+					wrapper.class = className
+				}
+				var updateBackground = function(className){
+					background.class = className;
+				}
+				var showHotels = function(){
+					updateToggler('Loading', 'b-button--loading');
+					HotelSvc.getHotels().then(function(res){
+						if(res.status !== 500) {
+							$scope.hotels = res.data;
+							updateToggler('Load another set', 'b-button--success');
+							updateWrapper('');
+							updateBackground('b-background--gradient');
+							$state.go('home.hotels');
+						} else {
+							$scope.error = res.data.error;
+							updateWrapper('');
+							updateToggler('Try again', 'b-button--error');
+							updateBackground('b-background--gradient');
+							$state.go('home.error')
+						}
+						
+					});
+				}
+				return {
+					getHotels: showHotels,
+					togglerButton: togglerButton,
+					wrapper: wrapper,
+					background: background
+				}
+			}();
 			
 		}
 	}).state('home.hotels', {
@@ -24,31 +76,13 @@ app.config(['$stateProvider', '$locationProvider', function($stateProvider, $loc
 		controller: function($scope){
 
 		}
+	}).state('home.error', {
+		name: 'home.error',
+		template: '<div class="b-error"><p class="b-error__text">{{error}}</p></div>',
+		controller: function() {
+
+		}
 	})
 	
 	$locationProvider.html5Mode(true);
 }])
-
-//slider
-//TODO adjust for multiples and end of slide
-var d = document;
-var wrap = d.querySelector('.b-image');
-var items = d.querySelector('.b-image__wrapper');
-var itemCount = d.querySelectorAll('.b-image__container').length;
-var scroller = d.querySelector('.b-image__scroller');
-var pos = 0;
-//var transform = Modernizr.prefixed('transform');
-
-function setTransform() {
-  items.style.transform = 'translate3d(' + (-pos * items.offsetWidth) + 'px,0,0)';
-}
-
-function prev() {
-  pos = Math.max(pos - 1, 0);
-  setTransform();
-}
-
-function next() {
-  pos = Math.min(pos + 1, itemCount - 1);
-  setTransform();
-}

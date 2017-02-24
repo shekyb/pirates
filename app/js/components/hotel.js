@@ -4,7 +4,6 @@ app.component('hotel', {
 	},
 	templateUrl: 'partials/hotel.html',
 	controller: function(HotelSvc, $state){
-		var that = this;
 		this.$onInit = function(){
 			var start = formatDate(this.hotelObj.date_start);
 			var end = formatDate(this.hotelObj.date_end);
@@ -12,13 +11,21 @@ app.component('hotel', {
 			this.hotel.date_start = start;
 			this.hotel.date_end = end;
 			this.reviewFlag = false;
-			this.toggleString = 'Show reviews'
+			this.toggleString = 'Show reviews';
+			this.sliderImages = [];
+			for (var i = 0; i < this.hotel.images.length; i++) {
+				var imgObj = {};
+				imgObj.src = this.hotel.images[i];
+				imgObj.visible = false
+				this.sliderImages.push(imgObj);
+			}
+			this.sliderImages[0].visible = true;
 		}
+		var that = this;
 		var formatDate = function(date) {
 			var d = new Date(date);
 			return d.toLocaleDateString('de-DE');
 		}
-
 		this.toggleReview = function(hotelId) {
 			if(!this.reviewFlag) {
 				HotelSvc.getReview(hotelId).then(function(res){
@@ -30,8 +37,75 @@ app.component('hotel', {
 				this.reviewFlag = false;
 				this.toggleString = 'Show reviews';
 			}
-			
 		}
 
+		this.toggler = function(){
+			var tg = this;
+			var reviewFlag = false;
+			var reviewWrapper = {
+				class: ''
+			}
+			var toggler = {
+				class: '',
+				string: 'Show reviews'
+			}
+			var updateReviewWrapper = function(className) {
+				reviewWrapper.class = className
+			}
+
+			var updateToggler = function(className, string) {
+				toggler.class = className;
+				toggler.string = string
+			}
+			var showReview = function(hotelId){
+				if(!reviewFlag) {
+					HotelSvc.getReview(hotelId).then(function(res){
+						that.reviews = res.data;
+						reviewFlag = true;
+						updateReviewWrapper('b-hotel__reviews-wrapper--open');
+						updateToggler('b-toggler--success', 'Close reviews')
+
+					})
+				} else {
+					reviewFlag = false;
+					updateReviewWrapper('');
+					updateToggler('', 'Show reviews');
+				}
+			}
+			return {
+			 	showReview: showReview,
+			 	reviewWrapper: reviewWrapper,
+			 	toggler: toggler,
+			 	reviewFlag: reviewFlag
+			 }
+		}()
+
+		this.slides = function(){
+			var slidePosition = 0;
+			var move = function(){
+				for (var i = 0; i < that.sliderImages.length; i++) {
+					that.sliderImages[i].visible = false;
+				}
+				that.sliderImages[slidePosition].visible = true;
+			}
+			var moveRight = function(){
+				if(slidePosition < that.sliderImages.length - 1) {
+					slidePosition++
+				} else {
+					slidePosition = 0;
+				}
+				move();
+			}
+			var moveLeft = function(){
+				if(slidePosition > 0) {
+					slidePosition--;
+				}
+				move();
+			}
+			return {
+				next: moveRight,
+				prev: moveLeft
+			}
+		}();
 	}
 })

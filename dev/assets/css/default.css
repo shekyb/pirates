@@ -47,6 +47,7 @@
           transition-duration($duration)
           transition-property($property)
           transition-timing-function($function)*/
+@import url("https://fonts.googleapis.com/css?family=Dosis:200,400,600&subset=latin-ext");
 .materialize-red {
   background-color: #e51c23 !important; }
 
@@ -2008,16 +2009,37 @@ th {
   padding: 0; }
 
 body {
-  background-color: #eceff1; }
+  font-family: 'Dosis', sans-serif; }
 
 .b-wrapper {
   display: flex;
   flex-direction: column;
-  margin: 30px 0; }
+  padding: 30px 0;
+  height: 10vh;
+  -webkit-transition: 1s;
+  -moz-transition: 1s;
+  -o-transition: 1s;
+  -ms-transition: 1s;
+  transition: 1s;
+  -webkit-transition-property: all;
+  -moz-transition-property: all;
+  -o-transition-property: all;
+  -ms-transition-property: all;
+  transition-property: all; }
   .b-wrapper.b-wrapper--row {
     flex-direction: row;
     justify-content: center;
     align-items: center; }
+  .b-wrapper.b-wrapper--half {
+    height: 100vh; }
+  .b-wrapper.b-wrapper--hotels {
+    background-color: #fff;
+    height: 100vh; }
+
+.b-background {
+  height: 100vh; }
+  .b-background.b-background--gradient {
+    background-image: linear-gradient(45deg, #93a5cf 0%, #e4efe9 100%); }
 
 .b-button {
   position: relative; }
@@ -2033,6 +2055,12 @@ body {
     .b-button.b-button--primary a:hover {
       background-color: #455a64;
       box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5); }
+  .b-button.b-button--success a {
+    background-color: #b0bec5;
+    color: #37474f; }
+    .b-button.b-button--success a:hover {
+      background-color: #90a4ae;
+      box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5); }
 
 .b-hotel {
   flex: 1 1 auto;
@@ -2043,11 +2071,46 @@ body {
   flex-direction: column; }
   .b-hotel .b-hotel__main {
     flex: 1 1 auto;
-    display: flex; }
+    display: flex;
+    border-radius: 3px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px 1px rgba(0, 0, 0, 0.3);
+    z-index: 222; }
   .b-hotel .b-hotel__reviews-wrapper {
     flex: 1 1 auto;
+    margin: auto;
+    width: 95%;
     display: flex;
-    flex-direction: column; }
+    flex-direction: column;
+    z-index: 111;
+    opacity: 0;
+    height: 0;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    overflow: hidden;
+    -webkit-transform: translate3d(0, -100px, 0);
+    -moz-transform: translate3d(0, -100px, 0);
+    -ms-transform: translate3d(0, -100px, 0);
+    -o-transform: translate3d(0, -100px, 0);
+    transform: translate3d(0, -100px, 0);
+    -webkit-transition: 0.3s;
+    -moz-transition: 0.3s;
+    -o-transition: 0.3s;
+    -ms-transition: 0.3s;
+    transition: 0.3s;
+    -webkit-transition-property: all;
+    -moz-transition-property: all;
+    -o-transition-property: all;
+    -ms-transition-property: all;
+    transition-property: all; }
+    .b-hotel .b-hotel__reviews-wrapper.b-hotel__reviews-wrapper--open {
+      -webkit-transform: translate3d(0, 0, 0);
+      -moz-transform: translate3d(0, 0, 0);
+      -ms-transform: translate3d(0, 0, 0);
+      -o-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+      opacity: 1;
+      height: 100%; }
 
 .b-image {
   flex: 0 0 33%;
@@ -2080,19 +2143,41 @@ body {
     margin-top: -30px;
     display: flex;
     position: relative;
-    z-index: 3333; }
+    z-index: 3333;
+    background-color: rgba(255, 255, 255, 0.5);
+    -webkit-transition: 0.3s;
+    -moz-transition: 0.3s;
+    -o-transition: 0.3s;
+    -ms-transition: 0.3s;
+    transition: 0.3s;
+    -webkit-transition-property: all;
+    -moz-transition-property: all;
+    -o-transition-property: all;
+    -ms-transition-property: all;
+    transition-property: all; }
     .b-image .b-image__controlls .b-image__controll {
-      flex: 1; }
+      flex: 1;
+      cursor: pointer;
+      font-size: 20px;
+      padding-left: 20px; }
+      .b-image .b-image__controlls .b-image__controll a {
+        color: #fff;
+        font-size: 16px; }
+      .b-image .b-image__controlls .b-image__controll:hover {
+        background-color: rgba(255, 255, 255, 0.2); }
       .b-image .b-image__controlls .b-image__controll.b-image__controll--right {
-        text-align: right; }
+        text-align: right;
+        padding-right: 20px; }
 
 .b-info {
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background-color: #b0bec5;
-  padding: 0 20px; }
+  background-image: linear-gradient(15deg, #13547a 0%, #80d0c7 100%);
+  padding: 0 20px;
+  color: #fff;
+  font-weight: 200; }
   .b-info .b-info__general {
     flex: 1 1 auto;
     display: flex;
@@ -2103,12 +2188,17 @@ body {
   .b-info .b-info__description {
     flex: 1 2 auto;
     display: flex;
-    align-items: center; }
+    align-items: center;
+    font-size: 16px; }
   .b-info .b-info__details {
     flex: 1 1 auto;
     display: flex;
     justify-content: space-between;
     align-items: center; }
+
+.b-name-location .b-name-location__name {
+  font-weight: 200;
+  padding-bottom: 10px; }
 
 .b-toggler {
   position: relative; }
@@ -2118,11 +2208,20 @@ body {
     box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.5);
     padding: 10px 12px;
     border-radius: 300px; }
+  .b-toggler a {
+    font-size: 12px;
+    padding: 8px 10px; }
   .b-toggler.b-toggler--default a {
     background-color: #d84315;
     color: #ffccbc; }
     .b-toggler.b-toggler--default a:hover {
       background-color: #e64a19;
+      box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5); }
+  .b-toggler.b-toggler--success a {
+    background-color: #b0bec5;
+    color: #37474f; }
+    .b-toggler.b-toggler--success a:hover {
+      background-color: #90a4ae;
       box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5); }
 
 .b-availability {
@@ -2134,6 +2233,12 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 20px 0; }
+  .b-review.b-review--negative {
+    background-image: linear-gradient(15deg, #f3989b 0%, #f8c1c3 100%);
+    color: #a21318; }
+  .b-review.b-review--positive {
+    background-image: linear-gradient(15deg, #c5e1a5 0%, #dcedc8 100%);
+    color: #558b2f; }
   .b-review .b-review__icon {
     flex: 0 0 10%;
     text-align: center; }
@@ -2147,6 +2252,29 @@ body {
         background-color: #e51c23;
         color: #a21318; }
   .b-review .b-review__content {
-    flex: 1 1 auto; }
+    flex: 1 1 auto;
+    padding-right: 10px; }
     .b-review .b-review__content .b-review__name {
       font-weight: bold; }
+
+.b-error {
+  flex: 1 1 auto;
+  margin: auto;
+  width: 60%;
+  text-align: center; }
+
+.b-star {
+  font-size: 16px; }
+  .b-star .fa {
+    padding-left: 5px; }
+
+.b-price .b-price__currency {
+  font-weight: 200; }
+
+.b-error .b-error__text {
+  font-size: 18px;
+  font-weight: 400; }
+
+@media only screen and (max-device-width: 720px) {
+  .b-hotel__main {
+    flex-direction: column; } }
