@@ -8,25 +8,25 @@ Below you will find instructions how to build and serve files in dev and product
 
 1. Clone the repo to your local machine and enter the folder
 
-```
-git clone https://github.com/shekyb/pirates.git
-cd pirates
-```
+    ```
+    git clone https://github.com/shekyb/pirates.git
+    cd pirates
+    ```
 
 2. Install the dependancies
 
-```
-npm install
-```
+    ```
+    npm install
+    ```
 
 3. Build files and run the server
 
-```
-gulp serve
-```
+    ```
+    gulp serve
+    ```
 
-If you would like to run production environment add `--production` flag
+    If you would like to run production environment add `--production` flag
 
-```
-gulp serve --production
-```
+    ```
+    gulp serve --production
+    ```
