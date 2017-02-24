@@ -10,8 +10,6 @@ app.component('hotel', {
 			this.hotel = this.hotelObj;
 			this.hotel.date_start = start;
 			this.hotel.date_end = end;
-			this.reviewFlag = false;
-			this.toggleString = 'Show reviews';
 			this.sliderImages = [];
 			for (var i = 0; i < this.hotel.images.length; i++) {
 				var imgObj = {};
@@ -26,21 +24,8 @@ app.component('hotel', {
 			var d = new Date(date);
 			return d.toLocaleDateString('de-DE');
 		}
-		this.toggleReview = function(hotelId) {
-			if(!this.reviewFlag) {
-				HotelSvc.getReview(hotelId).then(function(res){
-					that.reviews = res.data;
-					that.reviewFlag = true;
-					that.toggleString = 'Close reviews'
-				})
-			} else {
-				this.reviewFlag = false;
-				this.toggleString = 'Show reviews';
-			}
-		}
 
 		this.toggler = function(){
-			var tg = this;
 			var reviewFlag = false;
 			var reviewWrapper = {
 				class: ''
