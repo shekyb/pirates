@@ -305,3 +305,23 @@ body {
 		flex-direction: column;
 	}
 }
+@media only screen and (max-device-width: 1280px) {
+	.b-hotel__main {
+		flex-direction: row;
+	}
+	.b-name-location {
+		.b-name-location__name {
+			font-size: 24px;
+			font-weight: 400;
+			padding-bottom: 5px;
+		}
+	}
+	.b-info {
+		.b-info__description {
+			font-size: 14px;
+		}
+	}
+	.b-price__item {
+		font-size: 24px;
+	}
+}

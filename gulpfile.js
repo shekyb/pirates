@@ -10,7 +10,8 @@ var gulpif = require('gulp-if');
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
 //sass tasks
-//parse and concat scss files in dev environment
+//parse and concat scss files
+//depending on the flag passed they will be moved to dev or prod folder
 gulp.task('sass', function(){
 	gulp.src('app/sass/**/*.scss')
 		.pipe(sass().on('error', sass.logError))
@@ -27,7 +28,8 @@ gulp.task('watch:sass', ['sass'], function(){
 });
 
 //js tasks
-//concat js files in dev environment, make sure that app.js is first
+//concat js files, make sure that app.js is first
+//depending on the flag passed they will be moved to dev or prod folder
 gulp.task('js', function(){
 	gulp.src(['app/js/app.js', 'app/js/**/*.js'])
 		.pipe(concat('scripts.js'))
@@ -44,7 +46,7 @@ gulp.task('watch:js', ['js'], function() {
 });
 
 //partials tasks
-//moves html partials to the dev folder
+//moves html partials to the dev or prod folder
 gulp.task('partials', function(){
 	return gulp.src('app/partials/**/*.html')
 	.pipe(gulp.dest(args.production ? 'prod/partials' : 'dev/partials'))
@@ -66,7 +68,7 @@ gulp.task('watch:partials', ['partials'], function(){
 	})
 });
 
-// start and restart server on server.js and gulpfile.js changes, ignore app, dev and node_modules files
+// start and restart server on server.js, server-prod.js and gulpfile.js changes, ignore app, dev, prod and node_modules files
 gulp.task('server', function(){
 	var server = args.production ? 'server-prod.js' : 'server.js';
 	nodemon({
